@@ -532,6 +532,74 @@
       font-size: 11px;
     }
 
+
+    .password-screen {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .password-icon {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 28px;
+      font-size: 42px;
+      background: linear-gradient(145deg, rgba(255,111,168,.18), rgba(110,242,166,.08));
+      border: 1px solid var(--border);
+    }
+
+    .password-title {
+      margin: 0 0 10px;
+      font-size: 29px;
+      line-height: 1.25;
+    }
+
+    .password-box {
+      margin-top: 26px;
+    }
+
+    .password-input {
+      width: 100%;
+      min-height: 54px;
+      padding: 14px 16px;
+      color: var(--text);
+      background: #0b0d12;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      outline: none;
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: .08em;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .password-input:focus {
+      border-color: rgba(255,111,168,.68);
+      box-shadow: 0 0 0 4px rgba(255,111,168,.10);
+    }
+
+    .password-error {
+      min-height: 22px;
+      margin: 10px 0 12px;
+      color: var(--red);
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+
+    .password-error.visible { opacity: 1; }
+
+    .shake { animation: shake .35s ease; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-7px); }
+      50% { transform: translateX(7px); }
+      75% { transform: translateX(-4px); }
+    }
+
     @media (max-height: 700px) {
       .screen { min-height: 515px; padding-top: 22px; }
       .scan-icon { width: 82px; height: 82px; font-size: 38px; }
@@ -557,8 +625,31 @@
         <div style="width:44px"></div>
       </div>
 
+
+      <!-- 0. 비밀번호 화면 -->
+      <section id="password" class="screen active password-screen">
+        <div class="password-icon">🔐</div>
+        <h1 class="password-title">접근 권한 확인</h1>
+        <p class="lead">연애 시스템에 접속하려면<br>비밀번호 3자리를 입력해주세요.</p>
+
+        <div class="password-box" id="passwordBox">
+          <input
+            id="passwordInput"
+            class="password-input"
+            type="password"
+            inputmode="text"
+            autocomplete="off"
+            placeholder="오늘은 우리가 사귄 지 며칠째 되는 날일까요?"
+            aria-label="비밀번호"
+          />
+          <div class="password-error" id="passwordError">비밀번호가 올바르지 않습니다.</div>
+          <button class="btn btn-primary" id="passwordBtn">접속하기</button>
+        </div>
+        <div class="tiny">※ 허가받지 않은 사용자의 접속은 남자친구가 슬퍼합니다.</div>
+      </section>
+
       <!-- 1. 시작 화면 -->
-      <section id="start" class="screen active">
+      <section id="start" class="screen">
         <span class="badge">100 DAYS SPECIAL</span>
         <h1>연애 시스템<br>정기점검</h1>
         <p class="lead">
@@ -707,7 +798,9 @@
   <script>
     const CONFIG = {
       girlfriendName: "고민지",
-      boyfriendName: "김준수"
+      boyfriendName: "김준수",
+      // 여기에서 비밀번호를 원하는 값으로 바꾸면 됩니다.
+      password: "100"
     };
 
     const $ = (selector) => document.querySelector(selector);
@@ -716,6 +809,32 @@
     $("#userNameStart").textContent = CONFIG.girlfriendName;
     $("#boyfriendNameStart").textContent = CONFIG.boyfriendName;
     $("#serviceName").textContent = `${CONFIG.boyfriendName} 연애 서비스`;
+
+
+    function unlockSite() {
+      const input = $("#passwordInput");
+      const error = $("#passwordError");
+      const box = $("#passwordBox");
+
+      if (input.value.trim() === CONFIG.password) {
+        error.classList.remove("visible");
+        vibrate([25, 35, 25]);
+        showScreen("start");
+        return;
+      }
+
+      error.classList.add("visible");
+      box.classList.remove("shake");
+      void box.offsetWidth;
+      box.classList.add("shake");
+      vibrate([60, 40, 60]);
+      input.select();
+    }
+
+    $("#passwordBtn").addEventListener("click", unlockSite);
+    $("#passwordInput").addEventListener("keydown", event => {
+      if (event.key === "Enter") unlockSite();
+    });
 
     function showScreen(id) {
       $$(".screen").forEach(screen => screen.classList.remove("active"));
