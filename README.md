@@ -1,1 +1,0 @@
-# junsookim828.github.io

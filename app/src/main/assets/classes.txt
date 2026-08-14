@@ -1,0 +1,8 @@
+hog_rider
+musketeer
+ice_golem
+ice_spirit
+skeletons
+cannon
+fireball
+the_log
