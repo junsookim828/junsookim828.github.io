@@ -48,7 +48,7 @@ public final class YoloTfliteDetector implements AutoCloseable {
         outputShape = out.shape();
         outputType = out.dataType();
         if (outputType != DataType.FLOAT32) throw new IOException("Only FLOAT32 YOLO output is supported in this prototype");
-        confidenceThreshold = Math.max(0.01f, Math.min(0.99f, confidenceThreshold));
+        this.confidenceThreshold = Math.max(0.01f, Math.min(0.99f, confidenceThreshold));
     }
 
     public synchronized List<Detection> detect(Bitmap source) {
